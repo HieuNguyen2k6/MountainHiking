@@ -1,4 +1,5 @@
 model\Mountain.class
+valid\Validator.class
 list\StudentList.class
 show\View.class
 model\Student.class
