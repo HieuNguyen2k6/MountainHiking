@@ -6,7 +6,9 @@ package list;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import model.Student;
+import show.View;
 
 /**
  *
@@ -15,7 +17,7 @@ import model.Student;
 public class StudentList {
 
     private List<Student> students = new ArrayList<>();
-
+    
     public List<Student> getAll() {
         return students;
     }
@@ -23,13 +25,15 @@ public class StudentList {
     public void addRegistration(Student s) {
         students.add(s);
     }
-    
-    public Student findByCode(String code){
-        for (Student s : students){
-            if (s.getId().equalsIgnoreCase(code)){
+
+    public Student findByCode(String code) {
+        for (Student s : students) {
+            if (s.getId().equalsIgnoreCase(code)) {
                 return s;
             }
         }
         return null;
     }
+
+    
 }

@@ -4,6 +4,7 @@
  */
 package main;
 
+import java.util.HashSet;
 import java.util.Scanner;
 import list.MountainList;
 import list.StudentList;
@@ -36,6 +37,8 @@ public class MountainHiking {
                     case 1:
                         main.newRegistration();
                         break;
+                    case 2:
+                        main.UpdateRegistration();
                     default:
                         main.view.showMessage("This function is not available");
                 }
@@ -47,69 +50,58 @@ public class MountainHiking {
 
     public void newRegistration() {
         view.showMessage("\n===== New Registration =====");
-        String id;
-        while (true) {
-            id = view.readString("Enter Student Id: ");
-            if (Validator.validStudentId(id)) {
-                if (stList.findByCode(id) == null) {
-                    break;
-                }
-                view.showMessage("ID already exists!");
-            } else {
-                view.showMessage("Invalid! ID format (SE123456)!!!");
-            }
-        }
-
-        String name;
-        while (true) {
-            name = view.readString("Enter Name: ");
-            if (!Validator.validStudentName(name)) {
-                view.showMessage("Invalid! Name must be 2-20 characters!!!");
-            } else {
-                break;
-            }
-        }
-
-        String phone;
-        while (true) {
-            phone = view.readString("Enter Phone: ");
-            if (!Validator.vadlidPhone(phone)) {
-                view.showMessage("Invalid! Phone must belong to a valid Vietnamese network operator!!!");
-            } else {
-                break;
-            }
-        }
-
-        String email;
-        while (true) {
-            email = view.readString("Enter Email: ");
-            if (!Validator.vadlidEmail(email)) {
-                view.showMessage("Invalid! Email must be follow standard email format (...@gmail.com) !!!");
-            } else {
-                break;
-            }
-        }
-
-        String mountainCode;
-        while (true) {
-            mountainCode = view.readString("Enter Mountain Code (1-13): ");
-            Mountain m = mtList.findByCode(mountainCode);
-            if (m != null) {
-                view.showMessage(">> You have chosen the mountain: " + m.getMountain() + " (" + m.getProvince() + ")");
-                break;
-            } else {
-                view.showMessage("The mountain code does not exist! Please re-enter.");
-            }
-        }
-
-        double fee = view.readDouble("Enter Fee (Default 6,000,000): ", 6000000);
-            if (Validator.isViettelOrVNPT(phone)){
-                fee = fee * 0.65;
-            view.showMessage("Discount 35% applied!");
-        }
-            
+        String id = view.enterId(stList);
+        String name = view.enterName();
+        String phone = view.enterPhone();
+        String email = view.enterEmail();
+        String mountainCode = view.enterMountainCode(mtList);
+        double fee = view.enterFee(phone);
         stList.addRegistration(new Student(id, name, phone, email, mountainCode, fee));
         isChanged = true;
-        view.showMessage("Registration successful!");    
+        view.showMessage("Registration successful!");
+    }
+
+    public void UpdateRegistration() {
+        String id;
+        boolean update = true;
+        id = view.readString("Enter Student Id: ");
+        if (Validator.validStudentId(id)) {
+            if (stList.findByCode(id) != null) {
+                Student st = stList.findByCode(id);
+                while (update) {
+                    try {
+                        int choice = view.showUpdateMenu();
+                        switch (choice) {
+                            case 1:
+                                st.setName(view.enterName());
+                                view.showMessage("Update Name success!!!");
+                                break;
+                            case 2:
+                                st.setPhone(view.enterPhone());
+                                view.showMessage("Update Phone success!!!");
+                                break;
+                            case 3:
+                                st.setEmail(view.enterEmail());
+                                view.showMessage("Update Email success!!!");
+                                break;
+                            case 4:
+                                st.setMountainCode(view.enterMountainCode(mtList));
+                                view.showMessage("Update Mountain Peak Code success!!!");
+                                break;
+                            case 5:
+                                update = false;
+                                break;
+                            default:
+                                view.showMessage("This function is not available");
+                        }
+                    } catch (Exception e) {
+                        view.showMessage("Invalid input. Please try again.");
+                    }
+                }
+            }
+            view.showMessage("This student has not registered yet.");
+        } else {
+            view.showMessage("Invalid! ID format (SE123456)!!!");
+        }
     }
 }

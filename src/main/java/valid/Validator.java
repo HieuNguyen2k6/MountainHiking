@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Hiu
  */
 public class Validator {
-    private static final double DEFAULT_FEE = 6000000;
+    public static final double DEFAULT_FEE = 6000000;
     private static final String ID_FORMAT = "^[S|H|D|Q|C]E\\d{6}$";
     private static final String NAME_FORMAT = "^.{2,20}$";
     private static final String PHONE_FORMAT = "^0(3[2-9]|5[2689]|7[06-9]|8[1-9]|9[0-46-9])\\d{7}$";
