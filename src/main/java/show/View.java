@@ -72,7 +72,7 @@ public class View{
                 // Nếu nhập vào thì parse sang double
                 return Double.parseDouble(input);
             } catch (NumberFormatException e) {
-                System.out.println("Invalid number, try again.");
+                System.out.println(">> Invalid number, try again.");
             }
         }
     }
@@ -85,9 +85,9 @@ public class View{
                 if (stList.findByCode(id) == null) {
                     break;
                 }
-                showMessage("ID already exists!");
+                showMessage(">> ID already exists!");
             } else {
-                showMessage("Invalid! ID format (SE123456)!!!");
+                showMessage(">> Invalid! ID format (SE123456)!!!");
             }
         }
         return id;
@@ -98,7 +98,7 @@ public class View{
         while (true) {
             name = readString("Enter Name: ");
             if (!Validator.validStudentName(name)) {
-                showMessage("Invalid! Name must be 2-20 characters!!!");
+                showMessage(">> Invalid! Name must be 2-20 characters!!!");
             } else {
                 break;
             }
@@ -111,7 +111,7 @@ public class View{
         while (true) {
             phone = readString("Enter Phone: ");
             if (!Validator.vadlidPhone(phone)) {
-                showMessage("Invalid! Phone must belong to a valid Vietnamese network operator!!!");
+                showMessage(">> Invalid! Phone must belong to a valid Vietnamese network operator!!!");
             } else {
                 break;
             }
@@ -124,7 +124,7 @@ public class View{
         while (true) {
             email = readString("Enter Email: ");
             if (!Validator.vadlidEmail(email)) {
-                showMessage("Invalid! Email must be follow standard email format (...@gmail.com) !!!");
+                showMessage(">> Invalid! Email must be follow standard email format (...@gmail.com) !!!");
             } else {
                 break;
             }
@@ -138,10 +138,10 @@ public class View{
             mountainCode = readString("Enter Mountain Code (1-13): ");
             Mountain m = mtList.findByCode(mountainCode);
             if (m != null) {
-                showMessage(">> You have chosen the mountain: " + m.getMountain() + " (" + m.getProvince() + ")");
+                showMessage(">>  You have chosen the mountain: " + m.getMountain() + " (" + m.getProvince() + ")");
                 break;
             } else {
-                showMessage("The mountain code does not exist! Please re-enter.");
+                showMessage(">> The mountain code does not exist! Please re-enter.");
             }
         }
         return mountainCode;
@@ -151,7 +151,7 @@ public class View{
         double fee = readFee("Enter Fee (Default 6,000,000): ");
         if (Validator.isViettelOrVNPT(phone)) {
             fee = fee * 0.65;
-            showMessage("Discount 35% applied!");
+            showMessage(">> Discount 35% applied!");
         }
         return fee;
     }

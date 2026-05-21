@@ -35,5 +35,13 @@ public class StudentList {
         return null;
     }
 
-    
+    public boolean delete(String id) {
+        Student s = findByCode(id);
+        if (s != null) {
+            students.remove(s);
+            return true;
+        }
+        return false;
+    }
+
 }
