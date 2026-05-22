@@ -22,11 +22,7 @@ public class Student {
         this.name = name;
         this.phone = phone;
         this.email = email;
-        if (Integer.parseInt(mountainCode) < 10) {
-            this.mountainCode = "MT0" + mountainCode;
-        } else {
-            this.mountainCode = mountainCode;
-        }
+        this.mountainCode = mountainCode;
         this.tutionFee = tutionFee;
     }
 
@@ -67,11 +63,7 @@ public class Student {
     }
 
     public void setMountainCode(String mountainCode) {
-        if (Integer.parseInt(mountainCode) < 10) {
-            this.mountainCode = "MT0" + mountainCode;
-        } else {
-            this.mountainCode = mountainCode;
-        }
+        this.mountainCode = mountainCode;
     }
 
     public double getTutionFee() {

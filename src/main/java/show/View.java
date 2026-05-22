@@ -6,12 +6,8 @@ package show;
 
 import java.util.List;
 import java.util.Scanner;
-import list.MountainList;
-import list.StudentList;
-import model.Mountain;
 import model.Student;
 import valid.Validator;
-import static valid.Validator.DEFAULT_FEE;
 
 /**
  *
@@ -62,13 +58,37 @@ public class View {
         System.out.println("---------------------------------------------------------------------------");
     }
     
-    public boolean delete(Student s, List<Student> list) {
-        if (s != null) {
-            list.remove(s);
-            return true;
+    public void showStatisticsTable(List<model.Mountain> mountains, List<Student> students) {
+    System.out.println("---------------------------------------------------");
+    System.out.printf("%-9s | %-22s | %-20s\n", "Peak Name", "Number of Participants", "Total Cost");
+    System.out.println("---------------------------------------------------");
+    
+   
+
+    // Duyệt qua từng ngọn núi trong danh sách master để đếm sinh viên
+    for (model.Mountain m : mountains) {
+        int count = 0;
+        double totalCost = 0;
+
+        for (Student s : students) {
+            // Kiểm tra xem sinh viên có đăng ký ngọn núi này không
+            if (s.getMountainCode().equalsIgnoreCase(m.getMountainCode())) {
+                count++;
+                totalCost += s.getTutionFee();
+            }
         }
-        return false;
-    }
+
+        // Đề bài LAB211 yêu cầu: Chỉ hiển thị những ngọn núi nào CÓ sinh viên đăng ký (count > 0)
+        if (count > 0) {
+            System.out.printf("%-9s | %-22d | %-20s\n", 
+                    m.getMountainCode(), 
+                    count, 
+                    String.format("%,.0f", totalCost));
+           
+        }
+    }    
+    System.out.println("---------------------------------------------------");
+}
 
     public void showMessage(String msg) {
         System.out.println(msg);
@@ -87,7 +107,7 @@ public class View {
 
                 // Nếu người dùng bỏ trống (chỉ ấn Enter), lấy luôn giá trị mặc định
                 if (input.isEmpty()) {
-                    return DEFAULT_FEE;
+                    return Validator.getDefaultFee();
                 }
 
                 // Nếu nhập vào thì parse sang double
@@ -96,84 +116,5 @@ public class View {
                 System.out.println(">> Invalid number, try again.");
             }
         }
-    }
-
-    public String enterId(StudentList stList) {
-        String id;
-        while (true) {
-            id = readString("Enter Student Id: ");
-            if (Validator.validStudentId(id)) {
-                if (stList.findById(id) == null) {
-                    break;
-                }
-                showMessage(">> ID already exists!");
-            } else {
-                showMessage(">> Invalid! ID format (SE123456)!!!");
-            }
-        }
-        return id;
-    }
-
-    public String enterName() {
-        String name;
-        while (true) {
-            name = readString("Enter Name: ");
-            if (!Validator.validStudentName(name)) {
-                showMessage(">> Invalid! Name must be 2-20 characters!!!");
-            } else {
-                break;
-            }
-        }
-        return name;
-    }
-
-    public String enterPhone() {
-        String phone;
-        while (true) {
-            phone = readString("Enter Phone: ");
-            if (!Validator.vadlidPhone(phone)) {
-                showMessage(">> Invalid! Phone must belong to a valid Vietnamese network operator!!!");
-            } else {
-                break;
-            }
-        }
-        return phone;
-    }
-
-    public String enterEmail() {
-        String email;
-        while (true) {
-            email = readString("Enter Email: ");
-            if (!Validator.vadlidEmail(email)) {
-                showMessage(">> Invalid! Email must be follow standard email format (...@gmail.com) !!!");
-            } else {
-                break;
-            }
-        }
-        return email;
-    }
-
-    public String enterMountainCode(MountainList mtList) {
-        String mountainCode;
-        while (true) {
-            mountainCode = readString("Enter Mountain Code (1-13): ");
-            Mountain m = mtList.findByCode(mountainCode);
-            if (m != null) {
-                showMessage(">>  You have chosen the mountain: " + m.getMountain() + " (" + m.getProvince() + ")");
-                break;
-            } else {
-                showMessage(">> The mountain code does not exist! Please re-enter.");
-            }
-        }
-        return mountainCode;
-    }
-
-    public double enterFee(String phone) {
-        double fee = readFee("Enter Fee (Default 6,000,000): ");
-        if (Validator.isViettelOrVNPT(phone)) {
-            fee = fee * 0.65;
-            showMessage(">> Discount 35% applied!");
-        }
-        return fee;
     }
 }

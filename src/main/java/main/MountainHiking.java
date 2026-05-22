@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Scanner;
 import list.MountainList;
 import list.StudentList;
+import model.Mountain;
 import model.Student;
+import service.FileService;
 import show.View;
 import valid.Validator;
 
@@ -21,10 +23,14 @@ public class MountainHiking {
 
     private final StudentList stList = new StudentList();
     private final MountainList mtList = new MountainList();
+    private final FileService fileService = new FileService();
     private final View view = new View(new Scanner(System.in));
 
+    private boolean isChanged = false;
+
     public MountainHiking() {
-        mtList.loadFromFile("MountainList.csv");
+        fileService.loadMountainFromFile(mtList, "MountainList.csv");
+        fileService.loadStudentFromFile(stList, "RegistrationList.csv");
     }
 
     public static void main(String[] args) {
@@ -51,6 +57,15 @@ public class MountainHiking {
                     case 6:
                         main.filterByCampus();
                         break;
+                    case 7:
+                        main.statisticsByMountain();
+                        break;
+                    case 8:
+                        main.saveData();
+                        break;
+                    case 9:
+                        main.exitSystem();
+                        break;
                     default:
                         main.view.showMessage(">> This function is not available");
                 }
@@ -62,20 +77,22 @@ public class MountainHiking {
 
     public void newRegistration() {
         view.showMessage("\n===== New Registration =====");
-        String id = view.enterId(stList);
-        String name = view.enterName();
-        String phone = view.enterPhone();
-        String email = view.enterEmail();
-        String mountainCode = view.enterMountainCode(mtList);
-        double fee = view.enterFee(phone);
+        String id = stList.enterId(stList);
+        String name = stList.enterName();
+        String phone = stList.enterPhone();
+        String email = stList.enterEmail();
+        String mountainCode = stList.enterMountainCode(mtList);
+        double fee = stList.enterFee(phone);
+
         stList.addRegistration(new Student(id, name, phone, email, mountainCode, fee));
+        isChanged = true;
         view.showMessage(">> Registration successful!");
     }
 
     public void updateRegistration() {
         String id;
         boolean update = true;
-        id = view.readString("Enter Student Id: ");
+        id = view.readString("\nEnter Student Id: ");
         if (Validator.validStudentId(id)) {
             if (stList.findById(id) != null) {
                 Student st = stList.findById(id);
@@ -84,30 +101,34 @@ public class MountainHiking {
                         int choice = view.showUpdateMenu();
                         switch (choice) {
                             case 1:
-                                st.setName(view.enterName());
+                                st.setName(stList.enterName());
                                 view.showMessage(">> Update Name success!!!");
+                                isChanged = true;
                                 break;
                             case 2:
                                 double fee = st.getTutionFee();
                                 String oldPhone = st.getPhone();
-                                st.setPhone(view.enterPhone());
+                                st.setPhone(stList.enterPhone());
                                 if (Validator.isViettelOrVNPT(oldPhone) && !Validator.isViettelOrVNPT(st.getPhone())) {
                                     fee = fee / 0.65;
                                     view.showMessage(">> Discount 35% Expired!");
                                 } else if (!Validator.isViettelOrVNPT(oldPhone) && Validator.isViettelOrVNPT(st.getPhone())) {
                                     fee = fee * 0.65;
-                                    view.showMessage(">> 3Discount 35% applied!");
+                                    view.showMessage(">> Discount 35% applied!");
                                 }
                                 st.setTutionFee(fee);
                                 view.showMessage(">> Update Phone success!!!");
+                                isChanged = true;
                                 break;
                             case 3:
-                                st.setEmail(view.enterEmail());
+                                st.setEmail(stList.enterEmail());
                                 view.showMessage(">> Update Email success!!!");
+                                isChanged = true;
                                 break;
                             case 4:
-                                st.setMountainCode(view.enterMountainCode(mtList));
+                                st.setMountainCode(stList.enterMountainCode(mtList));
                                 view.showMessage(">> Update Mountain Peak Code success!!!");
+                                isChanged = true;
                                 break;
                             case 5:
                                 update = false;
@@ -138,11 +159,11 @@ public class MountainHiking {
 
     public void deleteRegistration() {
         String id;
-        id = view.readString("Enter Student Id to Delete: ");
+        id = view.readString("\nEnter Student Id to Delete: ");
         if (Validator.validStudentId(id)) {
             Student st = stList.findById(id);
             if (st != null) {
-                System.out.println("\n===== Student Information =====");
+                System.out.println("===== Student Information =====");
                 System.out.println("ID       : " + st.getId());
                 System.out.println("Name     : " + st.getName());
                 System.out.println("Phone    : " + st.getPhone());
@@ -151,7 +172,7 @@ public class MountainHiking {
 
                 String confirm = view.readString("Are you sure you want to delete this registration? (Y/N): ");
                 if (confirm.equalsIgnoreCase("Y")) {
-                    view.delete(st, stList.getAll());
+                    stList.delete(st, stList.getAll());
                     view.showMessage(">> Deleted successfully!");
                 } else {
                     view.showMessage(">> Delete canceled.");
@@ -172,7 +193,7 @@ public class MountainHiking {
         } else {
             List<Student> searchResult = new ArrayList<>();
             String name;
-            name = view.readString("Enter Student Name for Search: ");
+            name = view.readString("\nEnter Student Name for Search: ");
             for (Student s : list) {
                 if (s.getName().toLowerCase().contains(name.toLowerCase())) {
                     searchResult.add(s);
@@ -189,24 +210,61 @@ public class MountainHiking {
 
     public void filterByCampus() {
         List<Student> list = stList.getAll();
-        
-        if (list.isEmpty()){
+
+        if (list.isEmpty()) {
             view.showMessage("\n>> No students have registered yet");
-        }else{
+        } else {
             List<Student> fliterList = new ArrayList<>();
             String campus;
-            campus = view.readString("Enter Campus Code: ");
-            for(Student s : list){
-                if(s.getId().contains(campus.toUpperCase())){
+            campus = view.readString("\nEnter Campus Code (e.g., SE, HE, DE, QE, CE): ");
+            for (Student s : list) {
+                if (s.getId().contains(campus.toUpperCase())) {
                     fliterList.add(s);
                 }
             }
-            
+
             if (!fliterList.isEmpty()) {
                 view.showList(fliterList);
             } else {
                 view.showMessage(">> No students have registered under this campus.");
             }
+        }
+    }
+
+    public void statisticsByMountain() {
+        List<Student> student = stList.getAll();
+        List<model.Mountain> mountain = mtList.getAll();
+
+        if (student.isEmpty()) {
+            view.showMessage(">> No statistics available (No mountains have registrations yet).");
+            return;
+        }
+
+        view.showStatisticsTable(mountain, student);
+    }
+
+    public void saveData() {
+        fileService.saveStudentToFile(stList, "RegistrationList.csv");
+        isChanged = false;
+    }
+
+    public void exitSystem() {
+        if (isChanged) {
+            String response = view.readString("Do you want to save the changes before exiting? (Y/N): ");
+            if (response.equalsIgnoreCase("Y")) {
+                fileService.saveStudentToFile(stList, "RegistrationList.csv");
+                view.showMessage("Data saved. Goodbye!");
+                System.exit(0);
+            } else if (response.equalsIgnoreCase("N")) {
+                String confirm = view.readString("You have unsaved changes. Are you sure you want to exit without saving? (Y/N): ");
+                if (confirm.equalsIgnoreCase("Y")) {
+                    view.showMessage("Goodbye!");
+                    System.exit(0);
+                }
+            }
+        } else {
+            view.showMessage("Goodbye!");
+            System.exit(0);
         }
     }
 }
