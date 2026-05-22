@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Scanner;
 import list.MountainList;
 import list.StudentList;
-import model.Mountain;
 import model.Student;
 import service.FileService;
 import show.View;

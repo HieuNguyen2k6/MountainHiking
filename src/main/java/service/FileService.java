@@ -36,7 +36,7 @@ public class FileService {
                 }
 
                 String code = data[0].trim();
-                if (Integer.parseInt(code) > 10) {
+                if (Integer.parseInt(code) > 9) {
                     code = "MT" + code;
                 } else {
                     code = "MT0" + code;

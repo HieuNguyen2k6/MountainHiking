@@ -104,7 +104,9 @@ public class StudentList {
 
     public String enterMountainCode(MountainList mtList) {
         String mountainCode;
+        List<Mountain> list = mtList.getAll();
         while (true) {
+            view.showMountainCode(list);
             mountainCode = view.readString("Enter Mountain Code (1-13): ");
             Mountain m = mtList.findByCode(mountainCode);
             if (m != null) {

@@ -6,6 +6,8 @@ package show;
 
 import java.util.List;
 import java.util.Scanner;
+import list.MountainList;
+import model.Mountain;
 import model.Student;
 import valid.Validator;
 
@@ -56,6 +58,17 @@ public class View {
             System.out.printf("%-10s | %-20s | %-10s | %-10s | %,.0f\n", s.getId(), s.getName(), s.getPhone(), s.getMountainCode(), s.getTutionFee());
         }
         System.out.println("---------------------------------------------------------------------------");
+    }
+    
+    public void showMountainCode(List<model.Mountain> mountains){
+        showMessage("\n===== Display Mountain Code List =====");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.printf("%-10s | %-20s | %-10s | %-10s\n", "Code", "Mountain", " Province", " Description");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        for (Mountain m : mountains){
+            System.out.printf("%-10s | %-20s | %-10s | %-10s\n", m.getMountainCode(), m.getMountain(), m.getProvince(), m.getDescription());
+        }
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
     }
     
     public void showStatisticsTable(List<model.Mountain> mountains, List<Student> students) {
