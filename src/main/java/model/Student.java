@@ -9,6 +9,7 @@ package model;
  * @author Hiu
  */
 public class Student {
+
     private String id;
     private String name;
     private String phone;
@@ -17,11 +18,15 @@ public class Student {
     private double tutionFee;
 
     public Student(String id, String name, String phone, String email, String mountainCode, double tutionFee) {
-        this.id = id;
+        this.id = id.toUpperCase();
         this.name = name;
         this.phone = phone;
         this.email = email;
-        this.mountainCode = mountainCode;
+        if (Integer.parseInt(mountainCode) < 10) {
+            this.mountainCode = "MT0" + mountainCode;
+        } else {
+            this.mountainCode = mountainCode;
+        }
         this.tutionFee = tutionFee;
     }
 
@@ -62,7 +67,11 @@ public class Student {
     }
 
     public void setMountainCode(String mountainCode) {
-        this.mountainCode = mountainCode;
+        if (Integer.parseInt(mountainCode) < 10) {
+            this.mountainCode = "MT0" + mountainCode;
+        } else {
+            this.mountainCode = mountainCode;
+        }
     }
 
     public double getTutionFee() {
@@ -72,6 +81,5 @@ public class Student {
     public void setTutionFee(double tutionFee) {
         this.tutionFee = tutionFee;
     }
-    
-    
+
 }

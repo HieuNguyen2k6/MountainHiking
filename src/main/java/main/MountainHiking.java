@@ -4,6 +4,7 @@
  */
 package main;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import list.MountainList;
@@ -44,6 +45,12 @@ public class MountainHiking {
                     case 4:
                         main.deleteRegistration();
                         break;
+                    case 5:
+                        main.searchParticipantsByName();
+                        break;
+                    case 6:
+                        main.filterByCampus();
+                        break;
                     default:
                         main.view.showMessage(">> This function is not available");
                 }
@@ -70,8 +77,8 @@ public class MountainHiking {
         boolean update = true;
         id = view.readString("Enter Student Id: ");
         if (Validator.validStudentId(id)) {
-            if (stList.findByCode(id) != null) {
-                Student st = stList.findByCode(id);
+            if (stList.findById(id) != null) {
+                Student st = stList.findById(id);
                 while (update) {
                     try {
                         int choice = view.showUpdateMenu();
@@ -123,17 +130,9 @@ public class MountainHiking {
     public void displayRegistration() {
         List<Student> list = stList.getAll();
         if (list.isEmpty()) {
-            view.showMessage("\nNo students have registered yet");
+            view.showMessage("\n>> No students have registered yet");
         } else {
-            view.showMessage("\n===== Display Registration List =====");
-            System.out.println("---------------------------------------------------------------------------");
-            System.out.printf("%-10s | %-20s | %-10s | %-10s | %-12s\n", "Student ID", "Name", "Phone", "Peak Code", "Fee");
-            System.out.println("---------------------------------------------------------------------------");
-            for (Student s : list) {
-                System.out.printf("%-10s | %-20s | %-10s | %-10s | %,.0f\n", s.getId(), s.getName(), s.getPhone(), s.getMountainCode(), s.getTutionFee());
-            }
-            System.out.println("---------------------------------------------------------------------------");
-
+            view.showList(list);
         }
     }
 
@@ -141,7 +140,7 @@ public class MountainHiking {
         String id;
         id = view.readString("Enter Student Id to Delete: ");
         if (Validator.validStudentId(id)) {
-            Student st = stList.findByCode(id);
+            Student st = stList.findById(id);
             if (st != null) {
                 System.out.println("\n===== Student Information =====");
                 System.out.println("ID       : " + st.getId());
@@ -152,16 +151,62 @@ public class MountainHiking {
 
                 String confirm = view.readString("Are you sure you want to delete this registration? (Y/N): ");
                 if (confirm.equalsIgnoreCase("Y")) {
-                    stList.delete(id);
-                    view.showMessage(">>  Deleted successfully!");
+                    view.delete(st, stList.getAll());
+                    view.showMessage(">> Deleted successfully!");
                 } else {
-                    view.showMessage(">>  Delete canceled.");
+                    view.showMessage(">> Delete canceled.");
                 }
             } else {
-                view.showMessage(">>  This student has not registered yet.");
+                view.showMessage(">> This student has not registered yet.");
             }
         } else {
-            view.showMessage(">>  Invalid! ID format (SE123456)!!!");
+            view.showMessage(">> Invalid! ID format (SE123456)!!!");
+        }
+    }
+
+    public void searchParticipantsByName() {
+        List<Student> list = stList.getAll();
+
+        if (list.isEmpty()) {
+            view.showMessage("\n>> No students have registered yet");
+        } else {
+            List<Student> searchResult = new ArrayList<>();
+            String name;
+            name = view.readString("Enter Student Name for Search: ");
+            for (Student s : list) {
+                if (s.getName().toLowerCase().contains(name.toLowerCase())) {
+                    searchResult.add(s);
+                }
+            }
+            if (!searchResult.isEmpty()) {
+                view.showList(searchResult);
+            } else {
+                view.showMessage(">> No one matches the search criteria!");
+            }
+
+        }
+    }
+
+    public void filterByCampus() {
+        List<Student> list = stList.getAll();
+        
+        if (list.isEmpty()){
+            view.showMessage("\n>> No students have registered yet");
+        }else{
+            List<Student> fliterList = new ArrayList<>();
+            String campus;
+            campus = view.readString("Enter Campus Code: ");
+            for(Student s : list){
+                if(s.getId().contains(campus.toUpperCase())){
+                    fliterList.add(s);
+                }
+            }
+            
+            if (!fliterList.isEmpty()) {
+                view.showList(fliterList);
+            } else {
+                view.showMessage(">> No students have registered under this campus.");
+            }
         }
     }
 }

@@ -4,10 +4,12 @@
  */
 package show;
 
+import java.util.List;
 import java.util.Scanner;
 import list.MountainList;
 import list.StudentList;
 import model.Mountain;
+import model.Student;
 import valid.Validator;
 import static valid.Validator.DEFAULT_FEE;
 
@@ -15,7 +17,7 @@ import static valid.Validator.DEFAULT_FEE;
  *
  * @author Hiu
  */
-public class View{
+public class View {
 
     private final Scanner sc;
 
@@ -40,13 +42,32 @@ public class View{
         return Integer.parseInt(sc.nextLine());
 
     }
-    
-    public int showUpdateMenu(){
+
+    public int showUpdateMenu() {
         System.out.println("\n===== Update Registration Information =====");
-        
+
         String[] options = {"Name", "Phone Number", "Email", "Mountain Peak Code", "Exit"};
         Menu.showMenu(options);
         return Integer.parseInt(sc.nextLine());
+    }
+
+    public void showList(List<Student> list) {
+        showMessage("\n===== Display Registration List =====");
+        System.out.println("---------------------------------------------------------------------------");
+        System.out.printf("%-10s | %-20s | %-10s | %-10s | %-12s\n", "Student ID", "Name", "Phone", "Peak Code", "Fee");
+        System.out.println("---------------------------------------------------------------------------");
+        for (Student s : list) {
+            System.out.printf("%-10s | %-20s | %-10s | %-10s | %,.0f\n", s.getId(), s.getName(), s.getPhone(), s.getMountainCode(), s.getTutionFee());
+        }
+        System.out.println("---------------------------------------------------------------------------");
+    }
+    
+    public boolean delete(Student s, List<Student> list) {
+        if (s != null) {
+            list.remove(s);
+            return true;
+        }
+        return false;
     }
 
     public void showMessage(String msg) {
@@ -76,13 +97,13 @@ public class View{
             }
         }
     }
-    
+
     public String enterId(StudentList stList) {
         String id;
         while (true) {
             id = readString("Enter Student Id: ");
             if (Validator.validStudentId(id)) {
-                if (stList.findByCode(id) == null) {
+                if (stList.findById(id) == null) {
                     break;
                 }
                 showMessage(">> ID already exists!");
