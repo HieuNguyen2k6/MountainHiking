@@ -6,7 +6,6 @@ package show;
 
 import java.util.List;
 import java.util.Scanner;
-import list.MountainList;
 import model.Mountain;
 import model.Student;
 import valid.Validator;

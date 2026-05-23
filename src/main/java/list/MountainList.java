@@ -14,14 +14,14 @@ import model.Mountain;
  */
 public class MountainList {
     
-    private List<Mountain> mountains = new ArrayList<>();
+    private List<Mountain> mountain = new ArrayList<>();
     
     public List<Mountain> getAll() {
-        return mountains;
+        return mountain;
     }
     
     public Mountain findByCode(String code) {
-        for (Mountain m : mountains) {
+        for (Mountain m : mountain) {
             // Hỗ trợ tìm kiếm linh hoạt cả mã dạng số "1" hoặc dạng chuỗi đầy đủ "MT01"
             if (m.getMountainCode().equalsIgnoreCase(code) || m.getMountainCode().contains(code)) {
                 return m;

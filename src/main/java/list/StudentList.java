@@ -18,19 +18,19 @@ import valid.Validator;
  */
 public class StudentList {
 
-    private List<Student> students = new ArrayList<>();
+    private List<Student> student = new ArrayList<>();
     private final View view = new View(new Scanner(System.in));
 
     public List<Student> getAll() {
-        return students;
+        return student;
     }
 
     public void addRegistration(Student s) {
-        students.add(s);
+        student.add(s);
     }
 
     public Student findById(String code) {
-        for (Student s : students) {
+        for (Student s : student) {
             if (s.getId().equalsIgnoreCase(code)) {
                 return s;
             }
