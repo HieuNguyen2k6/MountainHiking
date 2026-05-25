@@ -29,7 +29,7 @@ public class MountainHiking {
 
     public MountainHiking() {
         fileService.loadMountainFromFile(mtList, "MountainList.csv");
-        fileService.loadStudentFromFile(stList, "RegistrationList.csv");
+        fileService.loadStudentFromObject(stList, "RegistrationList.dat");
     }
 
     public static void main(String[] args) {
@@ -243,7 +243,7 @@ public class MountainHiking {
     }
 
     public void saveData() {
-        fileService.saveStudentToFile(stList, "RegistrationList.csv");
+        fileService.saveStudentToObject(stList, "RegistrationList.dat");
         isChanged = false;
     }
 
@@ -251,7 +251,7 @@ public class MountainHiking {
         if (isChanged) {
             String response = view.readString("Do you want to save the changes before exiting? (Y/N): ");
             if (response.equalsIgnoreCase("Y")) {
-                fileService.saveStudentToFile(stList, "RegistrationList.csv");
+                fileService.saveStudentToObject(stList, "RegistrationList.dat");
                 view.showMessage("Data saved. Goodbye!");
                 System.exit(0);
             } else if (response.equalsIgnoreCase("N")) {

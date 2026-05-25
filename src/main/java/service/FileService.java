@@ -14,6 +14,10 @@ import list.MountainList;
 import list.StudentList;
 import model.Mountain;
 import model.Student;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
 
 /**
  *
@@ -21,7 +25,7 @@ import model.Student;
  */
 public class FileService {
 
-    // 1. Đọc danh sách núi từ file CSV
+    // Đọc danh sách núi từ file CSV
     public void loadMountainFromFile(MountainList mtList, String filePath) {
         try ( BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -54,63 +58,29 @@ public class FileService {
         }
     }
 
-    // 2. Ghi danh sách sinh viên đăng ký ra file text/csv (Dùng cho chức năng Save)
-    public void saveStudentToFile(StudentList stList, String filePath) {
+    // Lưu binary object
+    public void saveStudentToObject(StudentList stList, String filePath) {
         List<Student> students = stList.getAll();
         if (students.isEmpty()) {
             System.out.println(">> Nothing to save! The registration list is empty.");
             return;
         }
-
-        try ( BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
-            // Ghi dòng tiêu đề
-            bw.write("StudentID,Name,Phone,Email,MountainCode,TuitionFee");
-            bw.newLine();
-
-            // Ghi dữ liệu từng sinh viên
-            for (Student s : students) {
-                String line = String.format("%s,%s,%s,%s,%s,%.0f",
-                        s.getId(),
-                        s.getName(),
-                        s.getPhone(),
-                        s.getEmail(),
-                        s.getMountainCode(),
-                        s.getTutionFee());
-                bw.write(line);
-                bw.newLine();
-            }
-            System.out.println(">> Save data to file successfully! (Saved " + students.size() + " records)");
+        try ( ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            oos.writeObject(students);
+            System.out.println("Registration data has been successfully saved to `" + filePath + "`.");
         } catch (IOException e) {
-            System.err.println(">> [ERROR] Unable to save student file: " + e.getMessage());
+            System.err.println(">> [ERROR] Unable to save file: " + e.getMessage());
         }
     }
 
-    public void loadStudentFromFile(StudentList stList, String filePath) {
-        try ( BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            br.readLine(); // Bỏ qua dòng tiêu đề
-            while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty()) {
-                    continue;
-                }
-                String[] data = line.split(",");
-                if (data.length < 6) {
-                    continue;
-                }
-
-                String id = data[0].trim();
-                String name = data[1].trim();
-                String phone = data[2].trim();
-                String email = data[3].trim();
-                String mountainCode = data[4].trim();
-                double fee = Double.parseDouble(data[5].trim());
-
-                Student s = new Student(id, name, phone, email, mountainCode, fee);
-                stList.getAll().add(s);
-            }
-            System.out.println(">> Loaded successful " + stList.getAll().size() + " registered students from file.");
+    // Đọc binary object
+    @SuppressWarnings("unchecked")
+    public void loadStudentFromObject(StudentList stList, String filePath) {
+        try ( ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
+            List<Student> loaded = (List<Student>) ois.readObject();
+            stList.getAll().addAll(loaded);
+            System.out.println(">> Loaded " + stList.getAll().size() + " registered students from file.");
         } catch (Exception e) {
-            // Lần đầu tiên chạy chưa có file sinh viên thì sẽ bắt đầu danh sách mới
             System.out.println(">> No previous registration data found. Starting fresh!");
         }
     }
