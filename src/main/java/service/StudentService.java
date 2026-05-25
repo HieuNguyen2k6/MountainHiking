@@ -2,35 +2,49 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package list;
+package service;
 
+import file.StudentFile;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import model.Mountain;
 import model.Student;
-import show.View;
 import valid.Validator;
+import view.View;
 
 /**
  *
  * @author Hiu
  */
-public class StudentList {
+public class StudentService {
 
-    private List<Student> student = new ArrayList<>();
-    private final View view = new View(new Scanner(System.in));
+    private final View view;
+    private ArrayList<Student> studentList;
+    private StudentFile studentFile;
 
+    public StudentService(StudentFile studentFile, View view) {
+        this.studentFile = studentFile;
+        this.studentList = studentFile.loadFile();
+        this.view = view;
+    }
+    
+    public boolean delete(Student s) {
+        if (s != null) {
+            return studentList.remove(s);
+        }
+        return false;
+    }
+    
     public List<Student> getAll() {
-        return student;
+        return studentList;
     }
-
-    public void addRegistration(Student s) {
-        student.add(s);
+    
+    public void save() {
+        studentFile.saveStudentToFile(studentList);
     }
-
+    
     public Student findById(String code) {
-        for (Student s : student) {
+        for (Student s : studentList) {
             if (s.getId().equalsIgnoreCase(code)) {
                 return s;
             }
@@ -38,21 +52,17 @@ public class StudentList {
         return null;
     }
 
-    public boolean delete(Student s, List<Student> list) {
-        if (s != null) {
-            list.remove(s);
-            return true;
-        }
-        return false;
+    public void addRegistration(Student s) {
+        studentList.add(s);
     }
-
-    public String enterId(StudentList stList) {
+    
+    public String enterId() {
         String id;
         while (true) {
             id = view.readString("Enter Student Id: ");
             id = id.toUpperCase();
             if (Validator.validStudentId(id)) {
-                if (stList.findById(id) == null) {
+                if (findById(id) == null) {
                     break;
                 }
                 view.showMessage(">> ID already exists!");
@@ -102,7 +112,7 @@ public class StudentList {
         return email;
     }
 
-    public String enterMountainCode(MountainList mtList) {
+    public String enterMountainCode(MountainService mtList) {
         String mountainCode;
         List<Mountain> list = mtList.getAll();
         while (true) {

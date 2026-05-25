@@ -2,26 +2,33 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package list;
+package service;
 
-import java.util.ArrayList;
+import file.MountainFile;
 import java.util.List;
+import java.util.Scanner;
 import model.Mountain;
+import view.View;
 
 /**
  *
  * @author Hiu
  */
-public class MountainList {
-    
-    private List<Mountain> mountain = new ArrayList<>();
+public class MountainService {
+    private List<Mountain> mountainList;
+    private MountainFile mountainFile;
     
     public List<Mountain> getAll() {
-        return mountain;
+        return mountainList;
+    }
+    
+    public MountainService(MountainFile mountain) {
+        this.mountainFile = mountain;
+        this.mountainList = mountain.loadMountainFromFile();
     }
     
     public Mountain findByCode(String code) {
-        for (Mountain m : mountain) {
+        for (Mountain m : mountainList) {
             // Hỗ trợ tìm kiếm linh hoạt cả mã dạng số "1" hoặc dạng chuỗi đầy đủ "MT01"
             if (m.getMountainCode().equalsIgnoreCase(code) || m.getMountainCode().contains(code)) {
                 return m;

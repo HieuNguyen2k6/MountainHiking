@@ -9,6 +9,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <exec.mainClass>main.MountainHiking</exec.mainClass>
+        <exec.mainClass>com.lab211.mountainhiking.MountainHiking</exec.mainClass>
     </properties>
 </project>

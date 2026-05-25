@@ -1,82 +1,37 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Project/Maven2/JavaApp/src/main/java/${packagePath}/${mainClassName}.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package main;
+package controller;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import list.MountainList;
-import list.StudentList;
 import model.Student;
-import service.FileService;
-import show.View;
+import service.MountainService;
+import service.StudentService;
 import valid.Validator;
+import view.View;
 
 /**
  *
  * @author Hiu
  */
-public class MountainHiking {
-
-    private final StudentList stList = new StudentList();
-    private final MountainList mtList = new MountainList();
-    private final FileService fileService = new FileService();
-    private final View view = new View(new Scanner(System.in));
-
+public class StudentController {
+    private final View view;
+    private StudentService stList;
+    private MountainService mtList;
     private boolean isChanged = false;
 
-    public MountainHiking() {
-        fileService.loadMountainFromFile(mtList, "MountainList.csv");
-        fileService.loadStudentFromObject(stList, "RegistrationList.dat");
-    }
-
-    public static void main(String[] args) {
-        MountainHiking main = new MountainHiking();
-        while (true) {
-            try {
-                int choice = main.view.showMenu();
-                switch (choice) {
-                    case 1:
-                        main.newRegistration();
-                        break;
-                    case 2:
-                        main.updateRegistration();
-                        break;
-                    case 3:
-                        main.displayRegistration();
-                        break;
-                    case 4:
-                        main.deleteRegistration();
-                        break;
-                    case 5:
-                        main.searchParticipantsByName();
-                        break;
-                    case 6:
-                        main.filterByCampus();
-                        break;
-                    case 7:
-                        main.statisticsByMountain();
-                        break;
-                    case 8:
-                        main.saveData();
-                        break;
-                    case 9:
-                        main.exitSystem();
-                        break;
-                    default:
-                        main.view.showMessage(">> This function is not available");
-                }
-            } catch (Exception e) {
-                main.view.showMessage(">> Invalid input. Please try again.");
-            }
-        }
+    public StudentController(StudentService studentService, MountainService mountainService, View view) {
+        this.stList = studentService;
+        this.mtList = mountainService;
+        this.view = view;
     }
 
     public void newRegistration() {
         view.showMessage("\n===== New Registration =====");
-        String id = stList.enterId(stList);
+        String id = stList.enterId();
         String name = stList.enterName();
         String phone = stList.enterPhone();
         String email = stList.enterEmail();
@@ -97,6 +52,14 @@ public class MountainHiking {
                 Student st = stList.findById(id);
                 while (update) {
                     try {
+                        System.out.println("\n===== Student Information =====");
+                        System.out.println("ID       : " + st.getId());
+                        System.out.println("Name     : " + st.getName());
+                        System.out.println("Phone    : " + st.getPhone());
+                        System.out.println("Email    : " + st.getEmail());
+                        System.out.println("Mountain : " + st.getMountainCode());
+                        System.out.println("Fee      : " + String.format("%,.0f", st.getTutionFee()));
+                        System.out.println("-------------------------------------------");
                         int choice = view.showUpdateMenu();
                         switch (choice) {
                             case 1:
@@ -162,16 +125,17 @@ public class MountainHiking {
         if (Validator.validStudentId(id)) {
             Student st = stList.findById(id);
             if (st != null) {
-                System.out.println("===== Student Information =====");
+                System.out.println("\n===== Student Information =====");
                 System.out.println("ID       : " + st.getId());
                 System.out.println("Name     : " + st.getName());
                 System.out.println("Phone    : " + st.getPhone());
+                System.out.println("Email    : " + st.getEmail());
                 System.out.println("Mountain : " + st.getMountainCode());
                 System.out.println("Fee      : " + String.format("%,.0f", st.getTutionFee()));
-
+                System.out.println("-------------------------------------------");
                 String confirm = view.readString("Are you sure you want to delete this registration? (Y/N): ");
                 if (confirm.equalsIgnoreCase("Y")) {
-                    stList.delete(st, stList.getAll());
+                    stList.delete(st);
                     view.showMessage(">> Deleted successfully!");
                 } else {
                     view.showMessage(">> Delete canceled.");
@@ -183,7 +147,7 @@ public class MountainHiking {
             view.showMessage(">> Invalid! ID format (SE123456)!!!");
         }
     }
-
+    
     public void searchParticipantsByName() {
         List<Student> list = stList.getAll();
 
@@ -206,7 +170,7 @@ public class MountainHiking {
 
         }
     }
-
+    
     public void filterByCampus() {
         List<Student> list = stList.getAll();
 
@@ -229,7 +193,7 @@ public class MountainHiking {
             }
         }
     }
-
+    
     public void statisticsByMountain() {
         List<Student> student = stList.getAll();
         List<model.Mountain> mountain = mtList.getAll();
@@ -241,17 +205,16 @@ public class MountainHiking {
 
         view.showStatisticsTable(mountain, student);
     }
-
+    
     public void saveData() {
-        fileService.saveStudentToObject(stList, "RegistrationList.dat");
-        isChanged = false;
+        stList.save();
     }
-
+    
     public void exitSystem() {
         if (isChanged) {
             String response = view.readString("Do you want to save the changes before exiting? (Y/N): ");
             if (response.equalsIgnoreCase("Y")) {
-                fileService.saveStudentToObject(stList, "RegistrationList.dat");
+                saveData();
                 view.showMessage("Data saved. Goodbye!");
                 System.exit(0);
             } else if (response.equalsIgnoreCase("N")) {
