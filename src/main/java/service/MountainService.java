@@ -6,9 +6,7 @@ package service;
 
 import file.MountainFile;
 import java.util.List;
-import java.util.Scanner;
 import model.Mountain;
-import view.View;
 
 /**
  *

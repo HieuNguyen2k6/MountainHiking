@@ -4,15 +4,14 @@
  */
 package view;
 
-import controller.StudentController;
-import java.util.Scanner;
+import controller.Controller;
 
 public class Menu {
 
     private final View view;
-    private StudentController studentController;
+    private Controller studentController;
 
-    public Menu(StudentController studentController, View view) {
+    public Menu(Controller studentController, View view) {
         this.studentController = studentController;
         this.view = view;
     }

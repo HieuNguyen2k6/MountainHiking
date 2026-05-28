@@ -17,13 +17,13 @@ import view.View;
  *
  * @author Hiu
  */
-public class StudentController {
+public class Controller {
     private final View view;
     private StudentService stList;
     private MountainService mtList;
     private boolean isChanged = false;
 
-    public StudentController(StudentService studentService, MountainService mountainService, View view) {
+    public Controller(StudentService studentService, MountainService mountainService, View view) {
         this.stList = studentService;
         this.mtList = mountainService;
         this.view = view;

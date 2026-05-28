@@ -4,7 +4,7 @@
  */
 package main;
 
-import controller.StudentController;
+import controller.Controller;
 import file.MountainFile;
 import file.StudentFile;
 import java.util.Scanner;
@@ -23,7 +23,7 @@ public class Main {
         MountainService mountainService = new MountainService(new MountainFile());
         StudentService studentService = new StudentService(new StudentFile(), view);
 
-        StudentController studentController = new StudentController(studentService, mountainService, view);
+        Controller studentController = new Controller(studentService, mountainService, view);
         Menu menu = new Menu(studentController, view);
         menu.displayMenu();
     }
