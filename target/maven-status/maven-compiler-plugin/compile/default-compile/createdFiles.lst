@@ -1,11 +1,11 @@
 model\Mountain.class
 valid\Validator.class
 model\Student.class
+controller\Controller.class
 view\Menu.class
 service\MountainService.class
 service\StudentService.class
 view\View.class
 file\MountainFile.class
 main\Main.class
-controller\StudentController.class
 file\StudentFile.class

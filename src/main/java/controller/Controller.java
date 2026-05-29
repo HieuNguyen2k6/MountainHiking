@@ -6,7 +6,6 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import model.Student;
 import service.MountainService;
 import service.StudentService;
@@ -31,12 +30,12 @@ public class Controller {
 
     public void newRegistration() {
         view.showMessage("\n===== New Registration =====");
-        String id = stList.enterId();
-        String name = stList.enterName();
-        String phone = stList.enterPhone();
-        String email = stList.enterEmail();
-        String mountainCode = stList.enterMountainCode(mtList);
-        double fee = stList.enterFee(phone);
+        String id = view.enterId();
+        String name = view.enterName();
+        String phone = view.enterPhone();
+        String email = view.enterEmail();
+        String mountainCode = view.enterMountainCode(mtList);
+        double fee = view.enterFee(phone);
 
         stList.addRegistration(new Student(id, name, phone, email, mountainCode, fee));
         isChanged = true;
@@ -63,14 +62,14 @@ public class Controller {
                         int choice = view.showUpdateMenu();
                         switch (choice) {
                             case 1:
-                                st.setName(stList.enterName());
+                                st.setName(view.enterName());
                                 view.showMessage(">> Update Name success!!!");
                                 isChanged = true;
                                 break;
                             case 2:
                                 double fee = st.getTutionFee();
                                 String oldPhone = st.getPhone();
-                                st.setPhone(stList.enterPhone());
+                                st.setPhone(view.enterPhone());
                                 if (Validator.isViettelOrVNPT(oldPhone) && !Validator.isViettelOrVNPT(st.getPhone())) {
                                     fee = fee / 0.65;
                                     view.showMessage(">> Discount 35% Expired!");
@@ -83,16 +82,21 @@ public class Controller {
                                 isChanged = true;
                                 break;
                             case 3:
-                                st.setEmail(stList.enterEmail());
+                                st.setEmail(view.enterEmail());
                                 view.showMessage(">> Update Email success!!!");
                                 isChanged = true;
                                 break;
                             case 4:
-                                st.setMountainCode(stList.enterMountainCode(mtList));
+                                st.setMountainCode(view.enterMountainCode(mtList));
                                 view.showMessage(">> Update Mountain Peak Code success!!!");
                                 isChanged = true;
                                 break;
                             case 5:
+                                st.setTutionFee(view.enterFee(st.getPhone()));
+                                view.showMessage(">> Update Fee success!!!");
+                                isChanged = true;
+                                break;
+                            case 6:
                                 update = false;
                                 break;
                             default:
@@ -208,6 +212,7 @@ public class Controller {
     
     public void saveData() {
         stList.save();
+        isChanged = false;
     }
     
     public void exitSystem() {
@@ -228,5 +233,5 @@ public class Controller {
             view.showMessage("Goodbye!");
             System.exit(0);
         }
-    }
+    }            
 }

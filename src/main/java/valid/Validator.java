@@ -39,7 +39,7 @@ public class Validator {
         return phone != null && phone.matches(PHONE_FORMAT);
     }
 
-    public static boolean vadlidEmail(String email) {
+    public static boolean validEmail(String email) {
         return email != null && email.matches(EMAIL_FORMAT);
     }
 

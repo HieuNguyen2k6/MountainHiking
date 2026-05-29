@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Scanner;
 import model.Mountain;
 import model.Student;
+import service.MountainService;
+import service.StudentService;
 import valid.Validator;
 
 /**
@@ -16,6 +18,7 @@ import valid.Validator;
  */
 public class View {
 
+    private StudentService stList;
     private final Scanner sc;
 
     public View(Scanner sc) {
@@ -55,7 +58,8 @@ public class View {
         System.out.println("2.Phone Number");
         System.out.println("3.Email");
         System.out.println("4.Mountain Peak Code");
-        System.out.println("5.Exit");
+        System.out.println("5.Fee");
+        System.out.println("6.Exit");
         System.out.println("-------------------------------------------");
         System.out.print("Your Choice: ");
         return Integer.parseInt(sc.nextLine());
@@ -72,7 +76,7 @@ public class View {
         System.out.println("---------------------------------------------------------------------------");
     }
 
-     public void showStatisticsTable(List<model.Mountain> mountains, List<Student> students) {
+    public void showStatisticsTable(List<model.Mountain> mountains, List<Student> students) {
         System.out.println("---------------------------------------------------");
         System.out.printf("%-9s | %-22s | %-20s\n", "Peak Name", "Number of Participants", "Total Cost");
         System.out.println("---------------------------------------------------");
@@ -129,4 +133,96 @@ public class View {
             }
         }
     }
+
+    public String enterId() {
+        String id;
+        while (true) {
+            id = readString("Enter Student Id: ");
+            id = id.toUpperCase();
+            if (Validator.validStudentId(id)) {
+                if (stList.findById(id) == null) {
+                    break;
+                }
+                showMessage(">> ID already exists!");
+            } else {
+                showMessage(">> Invalid! ID format (SE123456)!!!");
+            }
+        }
+        return id;
+    }
+
+    public String enterName() {
+        String name;
+        while (true) {
+            name = readString("Enter Name: ");
+            if (!Validator.validStudentName(name)) {
+                showMessage(">> Invalid! Name must be 2-20 characters!!!");
+            } else {
+                break;
+            }
+        }
+        return name;
+    }
+
+    public String enterPhone() {
+        String phone;
+        while (true) {
+            phone = readString("Enter Phone: ");
+            if (!Validator.vadlidPhone(phone)) {
+                showMessage(">> Invalid! Phone must belong to a valid Vietnamese network operator!!!");
+            } else {
+                break;
+            }
+        }
+        return phone;
+    }
+
+    public String enterEmail() {
+        String email;
+        while (true) {
+            email = readString("Enter Email: ");
+            if (!Validator.validEmail(email)) {
+                showMessage(">> Invalid! Email must be follow standard email format (...@gmail.com) !!!");
+            } else {
+                break;
+            }
+        }
+        return email;
+    }
+
+    public String enterMountainCode(MountainService mtList) {
+        String mountainCode;
+        List<Mountain> list = mtList.getAll();
+        while (true) {
+            showMountainCode(list);
+            mountainCode = readString("Enter Mountain Code (1-13): ");
+            Mountain m = mtList.findByCode(mountainCode);
+            if (m != null) {
+                showMessage(">>  You have chosen the mountain: " + m.getMountain() + " (" + m.getProvince() + ")");
+                break;
+            } else {
+                showMessage(">> The mountain code does not exist! Please re-enter.");
+            }
+        }
+        if (mountainCode.matches("\\d+")) {
+            int code = Integer.parseInt(mountainCode);
+            mountainCode = (code > 9) ? "MT" + code : "MT0" + code;
+        } else {
+            mountainCode = mountainCode.toUpperCase();
+        }
+        return mountainCode;
+    }
+
+    public double enterFee(String phone) {
+        double fee = readFee("Enter Fee (Default 6,000,000): ");
+        if (Validator.isViettelOrVNPT(phone)) {
+            fee = fee * 0.65;
+            showMessage(">> Discount 35% applied!");
+        }
+        return fee;
+    }
+
+    public void setStudentService(StudentService stList) {
+        this.stList = stList;
+    }   
 }
